@@ -13,7 +13,7 @@ class ListTags extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label("Créer un Tag"),
+            Actions\CreateAction::make()->label("+ Créer un nouveau  Tag"),
         ];
     }
 }

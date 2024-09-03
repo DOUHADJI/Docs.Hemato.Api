@@ -16,6 +16,6 @@ class CreateTag extends CreateRecord
         return Notification::make()
             ->success()
             ->title('Creation de tag')
-            ->body("Letag a été créé avec succès");
+            ->body("Le tag a été créé avec succès");
     }
 }

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ProcessResource;
 
 class ProcessController extends Controller
 {
@@ -42,7 +43,7 @@ class ProcessController extends Controller
         $process = Process::where("slug", $slug)->first();
 
         return new JsonResponse([
-            "process" => $process
+            "process" => new ProcessResource($process)
         ], Response::HTTP_OK);
     }
 

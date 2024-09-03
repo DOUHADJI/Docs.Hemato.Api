@@ -18,7 +18,7 @@ class CreateProcess extends CreateRecord
     {
         return Notification::make()
             ->success()
-            ->title('Création de Procédure enregistré')
+            ->title('Création de Procédure')
             ->body("La création de la procédure a été effectuée avec succès");
     }
 

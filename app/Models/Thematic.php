@@ -5,21 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Ramsey\Uuid\Type\Integer;
 
-class Step extends Model
+class Thematic extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-      "name",
-      "slug"
-    ];
+        "name",
+        "slug"
+      ];
 
-    public function processes(): HasMany
+
+    public function courses() : HasMany
     {
-        return $this->hasMany(Process::class, "step_id");
+        return $this-> hasMany(Course::class, "thematic_id");
     }
-
-
 }

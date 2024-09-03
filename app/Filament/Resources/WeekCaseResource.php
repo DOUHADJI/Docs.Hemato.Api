@@ -4,33 +4,34 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
-use App\Models\Process;
 use Filament\Forms\Set;
+use App\Models\WeekCase;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
 use App\Helpers\FilamentNotificationMessages;
-use App\Filament\Resources\ProcessResource\Pages;
+use App\Filament\Resources\WeekCaseResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ProcessResource\RelationManagers;
+use App\Filament\Resources\WeekCaseResource\RelationManagers;
 
-class ProcessResource extends Resource
+class WeekCaseResource extends Resource
 {
-    protected static ?string $model = Process::class;
+    protected static ?string $model = WeekCase::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-clipboard-document-check';
-    protected static ?string $navigationLabel = "Procédures";
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = "Cas de la semaine";
     protected static ?string $recordTitleAttribute = 'title';
-    protected static ?string $label = "Liste des procédures";
+    protected static ?string $label = "Liste des Cas de la semaine";
+
 
 
     public static function form(Form $form): Form
@@ -39,21 +40,19 @@ class ProcessResource extends Resource
             ->schema([
                 Section::make("")->schema([
 
-                    Select::make("step_id")
-                        ->label("Etape analytique")
-                        ->relationship("step", "name"),
+
 
                     FileUpload::make("image_path")
                         ->label("Photo de couverture")
                         ->nullable(),
 
                     TextInput::make("video_path")
-                        ->label("Vidéo de démonstration")
+                        ->label("Url de la vidéo de démonstration")
                         ->nullable()
                         ->columnSpan(2),
 
                     TextInput::make("title")
-                        ->label("Titre dela procédure")
+                        ->label("Titre du cas de la semaine")
                         ->live(onBlur: true)
                         ->afterStateUpdated(function (Set $set, $state) {
                             $set("slug", Str::slug($state));
@@ -61,7 +60,13 @@ class ProcessResource extends Resource
                         ->required()
                         ->columnSpan(2),
 
-                    TextInput::make('slug')->label("Slug de la procédure")->required(),
+                    TextInput::make('slug')->label("Slug du cas de la semaine")->required(),
+
+                    Textarea::make('resume')
+                        ->label("Resume du cas de la semaine")
+                        ->required()
+                        ->rows(6)
+                        ->columnSpan(2),
 
 
 
@@ -78,13 +83,13 @@ class ProcessResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make("title")->label("Titre de la procédure")
+                TextColumn::make("title")->label("Titre du cas de la semaine")
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label("")->successNotificationTitle(FilamentNotificationMessages::successEditNotification()) ,
+                Tables\Actions\EditAction::make()->label("")->successNotificationTitle(FilamentNotificationMessages::successEditNotification()),
                 Tables\Actions\DeleteAction::make()->label("")->successNotificationTitle(FilamentNotificationMessages::successDeleteNotification()),
             ])
             ->bulkActions([
@@ -104,24 +109,14 @@ class ProcessResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListProcesses::route('/'),
-            'create' => Pages\CreateProcess::route('/create'),
-            'edit' => Pages\EditProcess::route('/{record}/edit'),
+            'index' => Pages\ListWeekCases::route('/'),
+            'create' => Pages\CreateWeekCase::route('/create'),
+            'edit' => Pages\EditWeekCase::route('/{record}/edit'),
         ];
     }
-
-
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
-    }
-
-
-    private function setPageTitle(): ?string
-    {
-        if (Route::getCurrentRoute() == "/admin/processes/create") {
-            return "une nouvelle procédure";
-        };
     }
 }

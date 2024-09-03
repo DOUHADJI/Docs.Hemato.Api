@@ -3,34 +3,30 @@
 namespace App\Filament\Resources;
 
 use Filament\Forms;
+use App\Models\Step;
 use Filament\Tables;
-use App\Models\Course;
 use Filament\Forms\Set;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\RichEditor;
 use Illuminate\Database\Eloquent\Builder;
-use App\Helpers\FilamentNotificationMessages;
-use App\Filament\Resources\CourseResource\Pages;
+use App\Filament\Resources\StepResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\CourseResource\RelationManagers;
+use App\Filament\Resources\StepResource\RelationManagers;
+use App\Helpers\FilamentNotificationMessages;
+use Filament\Tables\Columns\TextColumn;
 
-class CourseResource extends Resource
+class StepResource extends Resource
 {
-    protected static ?string $model = Course::class;
+    protected static ?string $model = Step::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = "Cours";
-    protected static ?string $recordTitleAttribute = 'title';
-    protected static ?string $label = "Liste des Cours";
-
+    protected static ?string $navigationLabel = "Etapes analytiques";
+    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $label = "Liste des Etapes analytiques";
 
     public static function form(Form $form): Form
     {
@@ -38,38 +34,18 @@ class CourseResource extends Resource
             ->schema([
                 Section::make("")->schema([
 
-                    Select::make("thematic_id")
-                        ->label("Thematique du cours")
-                        ->relationship("thematic", "name"),
-
-                    FileUpload::make("image_path")
-                        ->label("Photo de couverture")
-                        ->nullable(),
-
-                    TextInput::make("video_path")
-                        ->label("Vidéo de démonstration")
-                        ->nullable()
-                        ->columnSpan(2),
-
-                    TextInput::make("title")
-                        ->label("Titre dela procédure")
+                    TextInput::make("name")
+                        ->label("Nom de l'étape analytique")
                         ->live(onBlur: true)
                         ->afterStateUpdated(function (Set $set, $state) {
                             $set("slug", Str::slug($state));
                         })
                         ->required()
-                        ->columnSpan(2),
+                        ,
 
-                    TextInput::make('slug')->label("Slug du cours")->required(),
+                    TextInput::make('slug')->label("Slug de l'étape analytique")->required(),
 
-
-
-                    RichEditor::make('content')
-                        ->label("contenu")
-                        ->columnSpan(2)
-                        ->required()
-                ])
-                    ->columns(2)
+                ])->columns(2)
             ]);
     }
 
@@ -77,7 +53,8 @@ class CourseResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make("title")->label("Titre du cours")
+                TextColumn::make("name")->label("Nom de l'étape analytique"),
+                TextColumn::make("slug")->label("Slug l'étape analytique"),
             ])
             ->filters([
                 //
@@ -103,16 +80,15 @@ class CourseResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCourses::route('/'),
-            'create' => Pages\CreateCourse::route('/create'),
-            'edit' => Pages\EditCourse::route('/{record}/edit'),
+            'index' => Pages\ListSteps::route('/'),
+            //'create' => Pages\CreateStep::route('/create'),
+           // 'edit' => Pages\EditStep::route('/{record}/edit'),
         ];
     }
-
-
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
+
 }
